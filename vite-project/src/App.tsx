@@ -1,46 +1,102 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import SimonButton from "./SimonButton";
+import {useCallback, useEffect, useState} from "react";
+import Title from "./Title";
 
-function increment(this: any){
-    this.setState({compteur : this.state.compteur + 1})
+type Color = 'red' | 'blue' | 'yellow' | 'green'
+
+export const btnValues: Color[] = [
+        "red",
+        "blue",
+        "yellow",
+        "green"
+    ];
+
+const getRandomColor = () => {
+    return btnValues[Math.floor(Math.random() * btnValues.length)]
 }
+
 function App(this: any) {
-    const [count2, setCount2] = useState(0)
-  const [count, setCount] = useState(0)
-    const [ count3, setCount3] = useState(0)
+    const [sequence, setSequence] = useState([getRandomColor()])
+    const [currentIndex, setCurrentIndex] = useState(0)
+    let [isPlayerToPlay, setIsPlayerToPlay] = useState(false)
+    let [status, setStatus] = useState(false)
+    const fail = sequence.length === 0
+    let [count, setCount] = useState(0)
+    console.log("bonpne couleur : " + sequence)
+    console.log({isPlayerToPlay, sequence, currentIndex})
+    //use effect for end of combinaison
+    useEffect(() => {
+        if(isPlayerToPlay && currentIndex === sequence.length){
+            setIsPlayerToPlay(false)
+            setCurrentIndex(0)
+            // @ts-ignore
+            setSequence([...sequence, getRandomColor()])
+            setCount(count+1)
+        }
+    }, [isPlayerToPlay,count, sequence, currentIndex])
+
+    useEffect(() => {
+        if(!isPlayerToPlay && currentIndex === sequence.length){
+            setIsPlayerToPlay(true)
+            setCurrentIndex(0)
+            setCount(count+1)
+        }
+    }, [isPlayerToPlay,count, sequence, currentIndex])
+
+    //use effect if there is an error
+    /*useEffect(() => {
+        if(fail)
+        {
+            setIsPlayerToPlay(false)
+            setCurrentIndex(0)
+            // @ts-ignore
+            setSequence([getRandomColor()])
+        }
+    }, [sequence])*/
+
+    useEffect( ()=> {
+        if(status && !isPlayerToPlay)
+        {
+            setTimeout(()=>{
+                if (currentIndex != sequence.length)
+                {
+                    setCurrentIndex(currentIndex + 1)
+                }
+            }, 1000)
+        }
+    },[status, currentIndex])
+    const startGame = () => {
+        setStatus(true)
+        return ( alert("Regard bien la combinaison"))
+    }
+    const handleColorClick = (color: Color) => {
+        if(isPlayerToPlay){
+            if(color === sequence[currentIndex]){
+                setCurrentIndex(currentIndex + 1)
+            }
+            else {
+                setStatus(false)
+                setSequence([])
+                setCount(0)
+                alert("RATER ! Vous avez perdu ")
+            }
+        }
+    }
 
     return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount(((count) => count+1))}>
-          Boutton 1 a pour valeur {count+count3}
-        </button>
-      </div>
-        <div className="card">
-            <button onClick={() => setCount2(((count2) => count2+1))}>
-                Bouttton 2 a pour valeur {count2+count3}
-            </button>
-        </div>
         <div>
-            <button onClick={() => setCount3((count   ) => count+1)}>
-                Ajoute pour les deux
-            </button>
+            <h1>SIMON GAME</h1>
+            <Title isPlayerToPlay={isPlayerToPlay} />
+            {btnValues.map(color => <SimonButton
+                handleClick={() => isPlayerToPlay && handleColorClick(color)}
+                color={color}
+                active={status  && !isPlayerToPlay && sequence[currentIndex] === color }
+            />)}<br/><br/>
+            <button onClick={startGame}>START</button> <br/><br/>
+            <span>Nombre de manches gagnées : {count}</span>
         </div>
-    </div>
-
-
-  )
+    )
 }
 
 export default App

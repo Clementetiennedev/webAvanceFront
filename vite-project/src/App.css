@@ -33,10 +33,37 @@
   }
 }
 
-.card {
-  padding: 2em;
-}
-
 .read-the-docs {
   color: #888;
 }
+button{
+  width: 100px;
+  height: 100px;
+}
+.btn-color-red-active{
+  background-color: rgb(255, 0, 0);
+}
+.btn-color-green-active{
+  background-color: rgb(55, 255, 0);
+}
+.btn-color-blue-active{
+  background-color: rgb(0, 0, 255);
+}
+.btn-color-yellow-active{
+  background-color: rgb(255, 255, 0);
+}
+
+
+
+.btn-color-red-not-active{
+  background-color: rgba(255, 0, 0, 0.27);
+}
+.btn-color-green-not-active{
+   background-color: rgba(0, 128, 0, 0.18);
+ }
+.btn-color-blue-not-active{
+    background-color: rgba(0, 0, 255, 0.15);
+  }
+.btn-color-yellow-not-active{
+     background-color: rgba(255, 255, 0, 0.14);
+   }
